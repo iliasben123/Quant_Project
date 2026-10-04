@@ -1,0 +1,21 @@
+# Environnement Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Secrets (clés API)
+.env
+
+# Données téléchargées (régénérables)
+data/raw/*
+data/processed/*
+data/locked_test/*
+!data/**/.gitkeep
+
+# Éditeur / système
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

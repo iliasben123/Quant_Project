@@ -1,0 +1,107 @@
+# =============================================================
+# Configuration du projet de trading quantitatif
+# Décisions de la Phase 0 (voir GUIDE_PROJET_QUANT.md, section 0).
+# Ne pas modifier l'univers ni les dates de découpage après avoir
+# vu des résultats de backtest.
+# =============================================================
+
+project:
+  name: trading-quant-etf
+  market: etf
+  frequency: daily            # 1 bougie par jour de bourse
+  currency: USD
+
+# -------------------------------------------------------------
+# Source des données
+# -------------------------------------------------------------
+data_source:
+  provider: yfinance
+  interval: 1d
+  auto_adjust: true           # prix ajustés des splits et dividendes
+
+# -------------------------------------------------------------
+# Univers d'ETF
+# -------------------------------------------------------------
+universe:
+  - ticker: SPY
+    name: SPDR S&P 500
+    asset_class: actions_us
+  - ticker: QQQ
+    name: Invesco Nasdaq 100
+    asset_class: actions_us_tech
+  - ticker: IWM
+    name: iShares Russell 2000
+    asset_class: actions_us_small_caps
+  - ticker: EFA
+    name: iShares MSCI EAFE
+    asset_class: actions_developpes_hors_us
+  - ticker: EEM
+    name: iShares MSCI Emerging Markets
+    asset_class: actions_emergents
+  - ticker: TLT
+    name: iShares 20+ Year Treasury Bond
+    asset_class: obligations_long_terme
+  - ticker: IEF
+    name: iShares 7-10 Year Treasury Bond
+    asset_class: obligations_moyen_terme
+  - ticker: GLD
+    name: SPDR Gold Shares
+    asset_class: or
+  - ticker: DBC
+    name: Invesco DB Commodity Index
+    asset_class: matieres_premieres
+  - ticker: VNQ
+    name: Vanguard Real Estate
+    asset_class: immobilier
+
+# Benchmarks utilisés pour comparer les stratégies
+benchmarks:
+  - SPY                       # buy & hold SPY seul
+  - equal_weight_universe     # buy & hold équipondéré des 10 ETF
+
+# -------------------------------------------------------------
+# Dates
+# -------------------------------------------------------------
+dates:
+  download_start: "2006-01-01"
+  download_end: null          # null = jusqu'à aujourd'hui
+  # Premier jour où les 10 ETF existent (création de DBC). Le cleaner
+  # aligne automatiquement les données sur cette date.
+  common_start: "2006-02-06"
+
+# Découpage chronologique (bornes incluses, périodes contiguës)
+splits:
+  development:                # ~60 % : recherche et mise au point
+    start: "2006-02-06"
+    end: "2017-12-31"
+  validation:                 # ~20 % : choix entre variantes, robustesse
+    start: "2018-01-01"
+    end: "2021-12-31"
+  test:                       # ~20 % : test final, une seule fois
+    start: "2022-01-01"
+    end: null                 # null = jusqu'à aujourd'hui
+    locked: true              # interdit de lire ces données avant la fin
+
+# -------------------------------------------------------------
+# Chemins des dossiers (relatifs à la racine du projet)
+# -------------------------------------------------------------
+paths:
+  raw: data/raw                               # données brutes téléchargées
+  development: data/processed/development     # données nettoyées 2006-2017
+  validation: data/processed/validation       # données nettoyées 2018-2021
+  test: data/locked_test                      # données de test final (verrouillées)
+  research_journal: research/journal.md
+
+# -------------------------------------------------------------
+# Contrôles de qualité des données (cleaner)
+# -------------------------------------------------------------
+cleaning:
+  price_tolerance: 1.0e-6         # tolérance relative pour Open/Close dans [Low, High]
+  max_gap_days: 5                 # alerte si deux dates consécutives sont plus espacées
+  extreme_return_warning: 0.25    # alerte si |rendement journalier| dépasse 25 %
+
+storage:
+  format: csv
+  file_pattern: "{ticker}.csv"    # ex. data/raw/SPY.csv
+  date_column: Date
+  date_format: "%Y-%m-%d"

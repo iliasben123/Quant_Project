@@ -1,0 +1,21 @@
+# Données
+pandas
+numpy
+yfinance
+
+# Statistiques
+scipy
+statsmodels
+
+# Visualisation
+matplotlib
+
+# Configuration et secrets
+pyyaml
+python-dotenv
+
+# Tests
+pytest
+
+# Notebooks
+ipykernel
