@@ -93,6 +93,17 @@ paths:
   research_journal: research/journal.md
 
 # -------------------------------------------------------------
+# Stratégie (Phase 2)
+# Paramètres choisis a priori (valeurs classiques), non optimisés.
+# Toute modification doit être notée dans research/journal.md.
+# -------------------------------------------------------------
+strategy:
+  name: ma_crossover
+  short_window: 50
+  long_window: 200
+  ma_type: sma                    # sma (simple) ou ema (exponentielle)
+
+# -------------------------------------------------------------
 # Contrôles de qualité des données (cleaner)
 # -------------------------------------------------------------
 cleaning:

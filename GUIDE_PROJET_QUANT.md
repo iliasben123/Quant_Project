@@ -55,7 +55,8 @@ Une stratégie n'est acceptée que si, **sur les données de test (out-of-sample
 - le ratio de Sharpe est **≥ 0,7** ;
 - le max drawdown est **≤ 25 %** ;
 - son rendement ajusté du risque est **meilleur que le buy & hold** du même univers (équipondéré) ;
-- le backtest contient **au moins 100 trades** au total ;
+- le backtest contient **au moins 100 trades** (allers-retours) sur l'**historique complet** (développement + validation + test) ;
+- la stratégie reste **rentable après retrait de ses 3 meilleurs trades** (le résultat ne doit pas dépendre de quelques coups de chance) ;
 - le Sharpe hors-échantillon n'est **pas inférieur à la moitié** du Sharpe in-sample (sinon : overfitting probable).
 
 ### 0.6 Découpage des données (verrouillé dès la Phase 1)
@@ -377,7 +378,7 @@ trading project/
 - [ ] La stratégie a une **logique économique** (pourquoi devrait-elle marcher ?).
 - [ ] Backtest sur **plusieurs années** et plusieurs conditions de marché (hausse, baisse, crise).
 - [ ] Résultats positifs **hors-échantillon**, après frais et slippage.
-- [ ] Au moins **100 trades** dans le backtest.
+- [ ] Au moins **100 trades** sur l'historique complet, et rentable sans les 3 meilleurs trades.
 - [ ] Paramètres **robustes** (pas un seul réglage "magique").
 - [ ] Max drawdown **acceptable psychologiquement**.
 - [ ] **Paper trading** de 1 à 3 mois cohérent avec le backtest.
