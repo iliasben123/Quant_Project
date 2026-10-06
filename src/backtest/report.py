@@ -12,7 +12,7 @@ import argparse
 import pandas as pd
 
 from src.backtest.engine import BacktestResult, run_backtest
-from src.backtest.metrics import summarize
+from src.backtest.metrics import summarize, yearly_returns
 from src.data.loader import load_config
 from src.data.splitter import load_split
 from src.strategies.trend_following import MovingAverageCrossover
@@ -94,6 +94,16 @@ def per_ticker(result: BacktestResult) -> pd.DataFrame:
     return table.reindex(result.positions.columns)
 
 
+def yearly_table(runs: dict[str, BacktestResult], main_name: str) -> tuple[pd.DataFrame, pd.Series]:
+    """Rendements par année de la stratégie et des B&H, et écart avec le B&H 10 ETF."""
+    names = [main_name, "B&H 10 ETF", "B&H SPY"]
+    yearly = pd.DataFrame({name: yearly_returns(runs[name].equity) for name in names})
+    gap = yearly[main_name] - yearly["B&H 10 ETF"]
+    table = yearly.map(lambda x: f"{x:+.1%}")
+    table["Écart vs B&H 10 ETF"] = gap.map(lambda x: f"{x:+.1%}")
+    return table, gap
+
+
 def check_criteria(strat: dict, bench: dict, criteria: dict) -> list[tuple[str, bool]]:
     return [
         (f"Sharpe >= {criteria['min_sharpe']}", strat["sharpe"] >= criteria["min_sharpe"]),
@@ -121,6 +131,12 @@ def main() -> None:
 
     print(f"\nDétail par ETF ({main_name}) :")
     print(per_ticker(runs[main_name]).to_string())
+
+    table, gap = yearly_table(runs, main_name)
+    first_year = table.index[0]
+    print(f"\nRendement par année (l'année {first_year} est partielle) :")
+    print(table.to_string())
+    print(f"  Années où la stratégie bat le B&H 10 ETF : {(gap > 0).sum()} / {len(gap)}")
 
     criteria = config["success_criteria"]
     print(f"\nCritères de réussite (indicatif : la décision finale se prend sur le test) :")

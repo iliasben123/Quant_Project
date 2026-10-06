@@ -47,6 +47,14 @@ def max_drawdown(equity: pd.Series) -> float:
     return drawdown(equity).min()
 
 
+def yearly_returns(equity: pd.Series) -> pd.Series:
+    """Rendement de chaque année civile (la première et la dernière peuvent être partielles)."""
+    year_end = equity.groupby(equity.index.year).last()
+    previous = year_end.shift(1)
+    previous.iloc[0] = equity.iloc[0]
+    return year_end / previous - 1
+
+
 def trade_metrics(trades: pd.DataFrame) -> dict:
     """Statistiques sur les allers-retours."""
     n = len(trades)

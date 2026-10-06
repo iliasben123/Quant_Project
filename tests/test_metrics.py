@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.backtest.metrics import cagr, max_drawdown, sharpe, sortino, trade_metrics, volatility
+from src.backtest.metrics import (
+    cagr, max_drawdown, sharpe, sortino, trade_metrics, volatility, yearly_returns,
+)
 
 
 def series(values, start="2020-01-01"):
@@ -53,6 +55,16 @@ def test_trade_metrics():
     assert m["avg_loss"] == pytest.approx((-0.05 - 0.02) / 2)
     assert m["pnl_total"] == pytest.approx(340)
     assert m["pnl_without_top3"] == pytest.approx(340 - 410)
+
+
+def test_yearly_returns():
+    equity = pd.Series(
+        [100.0, 110.0, 121.0, 108.9],
+        index=pd.to_datetime(["2020-06-01", "2020-12-31", "2021-12-31", "2022-03-01"]),
+    )
+    result = yearly_returns(equity)
+    assert list(result.index) == [2020, 2021, 2022]
+    assert result.tolist() == pytest.approx([0.10, 0.10, -0.10])
 
 
 def test_trade_metrics_empty():
