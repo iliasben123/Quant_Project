@@ -104,6 +104,24 @@ strategy:
   ma_type: sma                    # sma (simple) ou ema (exponentielle)
 
 # -------------------------------------------------------------
+# Backtest (Phase 3)
+# Capital réparti en poches égales (une par ETF), sans rééquilibrage.
+# Signal du jour t exécuté à l'ouverture de t+1. Cash rémunéré à 0 %.
+# -------------------------------------------------------------
+backtest:
+  initial_capital: 100000
+  cost_per_order: 0.0005          # 0,05 % par achat ou vente (commission + slippage)
+  stress_cost_per_order: 0.0010   # test de stress à 0,10 %
+
+# Critères de réussite (section 0.5 du guide), jugés sur le test final
+success_criteria:
+  min_sharpe: 0.7
+  max_drawdown: 0.25
+  min_trades_full_history: 100
+  must_beat_benchmark_sharpe: true
+  must_be_profitable_without_top3: true
+
+# -------------------------------------------------------------
 # Contrôles de qualité des données (cleaner)
 # -------------------------------------------------------------
 cleaning:

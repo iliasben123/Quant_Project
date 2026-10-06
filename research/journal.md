@@ -17,7 +17,7 @@ Ce journal sert à savoir combien d'essais ont été faits avant de retenir une 
 | Indicateur | Valeur |
 |---|---|
 | Variantes définies | 1 |
-| Backtests lancés sur le développement | 0 |
+| Backtests lancés sur le développement | 1 |
 | Backtests lancés sur la validation | 0 |
 | Ouverture de la période de test | 0 / 1 |
 
@@ -56,6 +56,22 @@ Ce journal sert à savoir combien d'essais ont été faits avant de retenir une 
   - **82 entrées au total** (6 à 11 par ETF, ~0,7 par an et par ETF), donc sous le seuil de 100 trades sur le développement seul ;
   - durée moyenne d'une position : ~1 an (ex. SPY ≈ 350 jours) → impact des frais faible.
 - **Décision (2026-10-05, avant tout backtest)** : le critère des 100 trades est précisé. Il s'applique à l'historique complet (développement + validation + test), avec en plus l'obligation de rester rentable sans les 3 meilleurs trades. Paramètres 50/200 inchangés.
-- **Résultats** : à compléter en Phase 3 (backtester pas encore construit)
-- **Conclusion** : —
-- **Statut** : définie
+- **Backtest n°1 — développement (2026-10-05)** : du 2006-11-20 au 2017-12-29, 100 000 €, poches égales, cash à 0 %.
+
+  | | Stratégie 0,05 % | Stratégie 0,10 % | B&H 10 ETF | B&H SPY |
+  |---|---|---|---|---|
+  | CAGR | +5,23 % | +5,16 % | +6,44 % | +8,26 % |
+  | Volatilité | 8,41 % | 8,41 % | 12,35 % | 19,45 % |
+  | Sharpe | 0,65 | 0,64 | 0,57 | 0,51 |
+  | Sortino | 0,90 | 0,89 | 0,80 | 0,71 |
+  | Max drawdown | −13,1 % | −13,3 % | −35,9 % | −55,4 % |
+  | CAGR / Max DD | 0,40 | 0,39 | 0,18 | 0,15 |
+  | Temps investi | 68 % | 68 % | 100 % | 100 % |
+
+  - Trades : 82, réussite 57 %, gain moyen +19,7 %, perte moyenne −6,9 %, profit factor 3,35, durée moyenne 232 jours.
+  - Gain sans les 3 meilleurs trades : 47 235 € sur 76 130 € (les 3 meilleurs = 38 % du gain).
+  - Les 10 ETF sont gagnants. Contributeurs principaux : QQQ (21 218 €), SPY (14 594 €). Plus faibles : EFA (1 552 €), DBC (2 284 €).
+  - Critères (indicatif) : Sharpe 0,65 < 0,7 **NON** ; Max DD 13 % ≤ 25 % OK ; Sharpe > B&H OK ; rentable sans top 3 OK.
+- **Conclusion** : hypothèse confirmée. Drawdown divisé par ~2,7 par rapport au B&H 10 ETF, pour ~1,2 point de CAGR en moins. Insensible aux frais (stress test quasi identique). L'écart de Sharpe avec le B&H (0,65 vs 0,57) est faible et **pas statistiquement significatif** sur 11 ans (erreur type du Sharpe ≈ 0,3) : l'apport réel de la stratégie est la **réduction du risque de perte**, pas un meilleur rendement ajusté de la volatilité. Le Sharpe est juste sous le seuil de 0,7. **Paramètres 50/200 non modifiés.**
+- **Biais connu** : le cash rapporte 0 % dans le moteur alors que la stratégie est en cash 32 % du temps (taux courts US ~5 % en 2006-2007). Ce biais pénalise la stratégie, pas le B&H. À traiter éventuellement comme correction du modèle (pas comme optimisation), décision à noter ici avant tout nouveau backtest.
+- **Statut** : testée sur le développement
